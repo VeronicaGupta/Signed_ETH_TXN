@@ -31,20 +31,13 @@ char* intToHex(int value) {
     return hex_string;
 }
 
-uint8_t* print_arr(char* name, uint8_t* bytearray, size_t size){
-    if (debug == true){
-        // size_t i;
-        // printf("\n%s[%ld bytes]: ", name, size);
-        // for (i = 0; i <size; ++i) {
-            // printf("%02x ", bytearray[i]);
-        // }
-        // printf("[%d]\n", i);
-
-        char bytearray_hex[size*2+1];
+char* print_arr(char* name, uint8_t* bytearray, size_t size){
+    char bytearray_hex[size*2+1];
+    if (debug == true){        
         uint8ToHexString(bytearray, size, bytearray_hex);
         printf("\n%s[%d bytes]: %s\n", name, strlen(bytearray_hex)/2, bytearray_hex);
     }
-    return 0;
+    return bytearray_hex;
 }
 
 uint8_t* print_hexarr(char* name, const char *hexString, size_t size, uint8_t* bytearray){
