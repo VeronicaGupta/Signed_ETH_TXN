@@ -14,7 +14,7 @@ int main() {
     uint8_t private_key[privkey_len];
 
     // Constants for HD path
-    #define PURPOSE     0x8000002C // 44
+    #define PURPOSE     0x8000002C  // 44
     #define COIN_TYPE   0x8000003C  // 60 Ethereum
     #define ACCOUNT     0x80000000 
     #define CHANGE      0x00000000

@@ -1,23 +1,23 @@
 #include "utility.h"
 
-const char* hash1 = "d2d3b3c385d276a68e6487859d3a82d6b966bbc5ecf0f5231e39304f8a1c26ec";
-const char* hash2 = "2fcd6fb2835518528d7d1f396c2f61899be99f829eff0b0900c3e5702cb91391";
+const char* hash = "d2d3b3c385d276a68e6487859d3a82d6b966bbc5ecf0f5231e39304f8a1c26ec";
 const char* vseed = "2990a761daa2249c91ae98acf56ecf558876f6aa566e1e6e025996f12c830b793d87dde3f68cf9138fbe041bb75ba500c8eadee43d3ce2c95f84f89925bf8db5";
-const char* m_pubkey = "0224f058df29df85d8beefb32de09f8021a77103a16461569124a970180894b006";
-const char* m_chaincode = "74708ceb460eb927b337a6bb12c5580409c7bb2b0ffa88e84f1e9d34b5d15aa9";
-const char* m44_pubkey = "03257ed946188609f79a00654bed7bbdcb06b33f8fad855dcdf38903716c423fe9";
-const char* m4460_pubkey = "0257be163ce02fb13f6dc098f2bf63b1d7ed617247501619618bcbdf3fcf9bcf14";
-const char* m44600_pubkey = "03f0be61b961572efe595d1aa93970f57e8b2c9e438ce6bc42cc6ea3572a872bd9";
-const char* m446000_pubkey = "0329b4182e9a800bc10715a5f4f1737886f45d544e03b64c162425ede654d919f8";
-const char* m4460000_pubkey = "036bf7d2b891ada777a163953bae1f37c162405502b1c411338645d07b428fcf24";
+const char* m_pubkey = "036cd519b8ee267e7135b44e802df07970e56e3447bec20b720bd8fd8217b35a1d";
+const char* m_chaincode = "10f33e10df2f3864bb74e671cd510804cb69b88ae570fb714b4506ccca813b5c";
+const char* m44_pubkey = "03934580d6dc070772788b0c9d31c091596cd7ed06a92dcaa94d5029c83984cd7c";
+const char* m4460_pubkey = "027dc18d1ef4cdac075436ccc8ed4e9811d33d82f56a4c371854b28817af57c76a";
+const char* m44600_pubkey = "0298923deeecc9350aac6675e3f296bc5b37c35c34e8162c610c54ce2a6627af15";
+const char* m446000_pubkey = "02ea988cd5d2bfbc11dd37a882565517aa2fa45a0c4dc4bff5cc8b727acd63a73a";
+const char* m4460000_pubkey = "024eb7a0fb5db32746a28adf81a24daa5312d351c5af8ee957d04c9f443825b806";
 
-void hash256(const uint8_t *data, uint8_t *output, size_t size) {
+void generate_unsigned_txn(){
 
-    hasher_Raw(HASHER_SHA2, data, size, output);
-    // compare_keys("Unsign_txn hash1", output, hash1, SHA256_DIGEST_LENGTH);
+}
 
-    sha256_Raw(output, SHA256_DIGEST_LENGTH, output);
-    // compare_keys("Unsign_txn hash2", output, hash2, SHA256_DIGEST_LENGTH);
+void hash256(const char *data, const char *output, size_t size) {
+
+    keccak_256(data, size, output);
+    compare_keys("Unsign_txn hash", output, output, strlen(output));
 }
 
 void get_keys(const char *mnemonic, const char *passphrase, uint8_t* public_key, uint8_t* private_key,
@@ -41,22 +41,22 @@ void get_keys(const char *mnemonic, const char *passphrase, uint8_t* public_key,
 
     hdnode_private_ckd(&node, coin_type);
     hdnode_fill_public_key(&node);
-    compare_keys("M441_pubkey", node.public_key, m441_pubkey, publickey_len);
+    compare_keys("M4460_pubkey", node.public_key, m4460_pubkey, publickey_len);
     // node_details(node); 
 
     hdnode_private_ckd(&node, account);
     hdnode_fill_public_key(&node);
-    compare_keys("M4410_pubkey", node.public_key, m4410_pubkey, publickey_len);
+    compare_keys("M44600_pubkey", node.public_key, m44600_pubkey, publickey_len);
     // node_details(node); 
 
     hdnode_private_ckd(&node, change);
     hdnode_fill_public_key(&node);
-    // compare_keys("M44100_pubkey", node.public_key, m44100_pubkey, publickey_len);
+    compare_keys("M446000_pubkey", node.public_key, m446000_pubkey, publickey_len);
     // node_details(node); 
 
     hdnode_private_ckd(&node, address_idx);
     hdnode_fill_public_key(&node);
-    // compare_keys("M441000_pubkey", node.public_key, m441000_pubkey, publickey_len);
+    compare_keys("M4460000_pubkey", node.public_key, m4460000_pubkey, publickey_len);
     // node_details(node); 
 
     memcpy(public_key, node.public_key, publickey_len);
