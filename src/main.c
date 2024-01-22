@@ -38,10 +38,14 @@ int main() {
     print_arr("unsigned txn hash", unsigned_txn_hash, SHA3_256_DIGEST_LENGTH);
 
     // Sign the hash with the private key
-    const int sig_len = pubkey_len*2;
+    const int sig_len = privkey_len*2;
     uint8_t sig[sig_len];
     ecdsa_sign_digest(&secp256k1, private_key, unsigned_txn_hash, sig, 0, 0);
-    print_arr("signature", sig, pubkey_len*2);    
+    print_arr("sig", sig, sig_len);
+
+    uint8_t sig_hash[32];
+    hasher_Raw(HASHER_SHA2, sig, sig_len, sig_hash);
+    print_arr("sig hash", sig_hash, 32);    
 
     // Check the signature with public key
     int result = ecdsa_verify_digest(&secp256k1, public_key,  sig, unsigned_txn_hash);
@@ -51,15 +55,19 @@ int main() {
         fprintf(stderr, "Error: Transaction signing failed at %d.\n", result);
     }
 
+    // verify signature
+    // const char* verified_signature = "c515bbb14bbfcdcd3cd359c5674d71bff84ac7352057f07d3a71fbbb86f10e7263f5a826aadd3734fce97f67ec89720158f183ff94c4107a88c4162d05eeccbc";
+    // compare_keys("signature", sig, verified_signature, sig_len);
+
     // Output the values
-    uint8_t v, r[33], s[33];
+    uint8_t v, r[privkey_len], s[privkey_len];
     v = generate_vrs(sig, v, r, s, sig_len);
     printf("\nv[1 byte]: %02x\n", v);
     print_arr("r", r, 32);
     print_arr("s", s, 32);
 
     uint8_t signed_txn[300];
-    // generate_signed_txn(unsigned_txn, v, r, s);
+    generate_signed_txn(unsigned_txn, v, r, s, unsigned_txn_len, signed_txn);
 
     return 0;
 }
