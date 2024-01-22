@@ -14,7 +14,7 @@ web3 = Web3(Web3.HTTPProvider(i_api))
 transaction = web3.eth.get_transaction(hash)
 
 # Print the raw transaction hex
-raw_transaction_hex = web3.eth.account. encode_transaction(transaction).hex()
+# raw_transaction_hex = web3.eth.account. encode_transaction(transaction).hex()
 # print("Raw Transaction Hex:", raw_transaction_hex)
 
 from pprint import pprint

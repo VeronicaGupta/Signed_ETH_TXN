@@ -38,7 +38,8 @@ int main() {
     print_arr("unsigned txn hash", unsigned_txn_hash, SHA3_256_DIGEST_LENGTH);
 
     // Sign the hash with the private key
-    uint8_t sig[pubkey_len*2];
+    const int sig_len = pubkey_len*2;
+    uint8_t sig[sig_len];
     ecdsa_sign_digest(&secp256k1, private_key, unsigned_txn_hash, sig, 0, 0);
     print_arr("signature", sig, pubkey_len*2);    
 
@@ -51,17 +52,14 @@ int main() {
     }
 
     // Output the values
-    printf("v: %02x\n", sig[64] + 27 + (1 * 2));
-    printf("r: ");
-    for (int i = 0; i < 32; ++i) {
-        printf("%02x", sig[i]);
-    }
-    printf("\n");
-    printf("s: ");
-    for (int i = 0; i < 32; ++i) {
-        printf("%02x", sig[i + 32]);
-    }
-    printf("\n");
+    uint8_t v, r[33], s[33];
+    v = generate_vrs(sig, v, r, s, sig_len);
+    printf("\nv[1 byte]: %02x\n", v);
+    print_arr("r", r, 32);
+    print_arr("s", s, 32);
+
+    uint8_t signed_txn[300];
+    generate_signed_txn(unsigned_txn, v, r, s);
 
     return 0;
 }

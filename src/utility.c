@@ -10,6 +10,13 @@ const char* m44600_pubkey = "0298923deeecc9350aac6675e3f296bc5b37c35c34e8162c610
 const char* m446000_pubkey = "02ea988cd5d2bfbc11dd37a882565517aa2fa45a0c4dc4bff5cc8b727acd63a73a";
 const char* m4460000_pubkey = "024eb7a0fb5db32746a28adf81a24daa5312d351c5af8ee957d04c9f443825b806";
 
+const char* gasPrice = "000ce0665d50";
+const char* gasLimit = "5208";
+const char* toAddress = "47Ea71715F8049B80eD5C20d105e9C5D7631113f";
+const char* valueTrans = "01c8c979daabea";
+
+const int chain_id = 11155111; 
+
 uint8_t* rlp(int data_size, const char* packet_hex, uint8_t* packet){
     uint8_t data[data_size];
     hexToUint8(packet_hex, data);
@@ -21,11 +28,6 @@ uint8_t* rlp(int data_size, const char* packet_hex, uint8_t* packet){
 
     return packet;
 }
-
-const char* gasPrice = "000ce0665d50";
-const char* gasLimit = "5208";
-const char* toAddress = "47Ea71715F8049B80eD5C20d105e9C5D7631113f";
-const char* valueTrans = "01c8c979daabea";
 
 int generate_unsigned_txn(uint8_t* public_key, size_t pubkey_len, uint8_t* unsigned_txn){
     // transaction_data = {
@@ -145,18 +147,15 @@ void node_details(HDNode node){
     printf("\nnode details: child_num[%02x] : depth[%02x]\n", node.child_num, node.depth);
 }
 
-void generate_vrs(const uint8_t *signature, uint8_t *scriptSig, uint8_t* publicKey, size_t sig_len, size_t scriptSig_len, size_t pubkey_len){
-    // scriptSig: <opcode sig> <sig> <sig hash> <opcode pubkey> <pubKey>
+uint8_t generate_vrs(const uint8_t *sig, uint8_t v, uint8_t* r, uint8_t* s, size_t sig_len){
+    memzero(r, 32);
+    memzero(s, 32);
 
-    memzero(scriptSig, scriptSig_len);
-
-    scriptSig[0] = sig_len+1;  // Pushdata opcode <71 bytes
-    memcpy(scriptSig + 1, signature, sig_len); // Signature
-    scriptSig[1 + sig_len] = 0x01;  // Sighash
-    scriptSig[1 + sig_len+1] = pubkey_len;  // Pushdata opcode <71 bytes
-    memcpy(scriptSig + (1 + sig_len + 2), publicKey, pubkey_len); // PublicKey
-
-    // print_arr("scriptsig inside fn", scriptSig, scriptSig_len);
+    v = 35 + chain_id;
+    memcpy(r, sig, 32);
+    memcpy(s, sig+32, 32);
+    
+    return v;
 }
 
 void prepare_final_txn(uint8_t* unsigned_txn, uint8_t* packet, uint8_t* final_txn, size_t unsigned_txn_len, size_t packet_len, size_t final_txn_len, int start_len, int end_len){
@@ -169,8 +168,36 @@ void prepare_final_txn(uint8_t* unsigned_txn, uint8_t* packet, uint8_t* final_tx
     final_txn[start_len-1] = packet_len;
     memcpy(final_txn+start_len, packet, packet_len);
     memcpy(final_txn+mid_idx, unsigned_txn+end_idx, end_len);
+}
 
+void generate_signed_txn(uint8_t* unsigned_txn, uint8_t v, uint8_t* r, uint8_t* s, uint8_t unsigned_txn_len, uint8_t* signed_txn){
+    const int packet_len = 2 + ((sizeof(v)+sizeof(r)+sizeof(s))/sizeof(uint8_t));
+    // uint8_t packet[packet_len];
 
+    // int i=0, l=0; uint8_t out[32];
+
+    // i += l+1;
+    // packet[i] = v; // v
+    // i += l+1; l = 32; 
+    // memcpy(packet+i, rlp(l, r, out), l+1); // r
+    // i += l+1; l = 32;
+    // memcpy(packet+i, rlp(l, s, out), l+1); // s
+
+    const int signed_txn_len = 1+unsigned_txn_len+packet_len;
+    memzero(signed_txn, signed_txn_len);
+
+    // i=0;
+    // signed_txn[i] = signed_txn_len;
+    // i += 1;
+    // memcpy(signed_txn+i, unsigned_txn, unsigned_txn_len);
+    // i += unsigned_txn_len;
+    // signed_txn[i] = v;
+    // i += 1;
+    // memcpy(signed_txn+i, r, 32);
+    // i += 32;
+    // memcpy(signed_txn+i, s, 32);
+
+    // print_arr("signed txn", signed_txn, signed_txn_len);
 }
 
 // f8
@@ -178,11 +205,11 @@ void prepare_final_txn(uint8_t* unsigned_txn, uint8_t* packet, uint8_t* final_tx
 // 67
 // 80
 // 86 2d79883d2000
-// 82
-// 5208
+// 82 5208
 // 94 5df9b87991262f6ba471f09758cde1c0fc1de734
 // 82 7a69
 // 80
+
 // 1c
 // a0 88ff6cf0fefd94db46111149ae4bfc179e9b94721fffd821d38d16464b3f71d0
 // a0 45e0aff800961cfce805daef7016b9b675c137a6a41a548f7b60a3484c06a33a
