@@ -10,8 +10,9 @@ const char* m44600_pubkey = "0298923deeecc9350aac6675e3f296bc5b37c35c34e8162c610
 const char* m446000_pubkey = "02ea988cd5d2bfbc11dd37a882565517aa2fa45a0c4dc4bff5cc8b727acd63a73a";
 const char* m4460000_pubkey = "024eb7a0fb5db32746a28adf81a24daa5312d351c5af8ee957d04c9f443825b806";
 
+const char* nonce = "932A3E";
 const char* gasPrice = "000ce0665d50";
-const char* gasLimit = "5208";
+const char* gasLimit = "55F0";
 const char* toAddress = "47Ea71715F8049B80eD5C20d105e9C5D7631113f";
 const char* valueTrans = "01c8c979daabea";
 
@@ -53,7 +54,7 @@ int generate_unsigned_txn(uint8_t* public_key, size_t pubkey_len, uint8_t* unsig
     //     'yParity': 1
     // }
 
-    int unsigned_txn_len = 1 + 1 + (4 + ((strlen(gasPrice)+strlen(gasLimit)+strlen(toAddress)+strlen(valueTrans))/2)) + 1;
+    int unsigned_txn_len = 1 + 1 + (4 + ((strlen(nonce)+strlen(gasPrice)+strlen(gasLimit)+strlen(toAddress)+strlen(valueTrans))/2)) + 1;
 
     unsigned_txn[unsigned_txn_len];
     memzero(unsigned_txn, unsigned_txn_len);
@@ -61,8 +62,8 @@ int generate_unsigned_txn(uint8_t* public_key, size_t pubkey_len, uint8_t* unsig
     int i=0, r=0; uint8_t packet[50];
     unsigned_txn[i] = unsigned_txn_len;
 
-    i += r+1;
-    unsigned_txn[i] = 0x80; // nonce
+    i += r+1; r = strlen(nonce)/2;
+    memcpy(unsigned_txn+i, rlp(r, nonce, packet), r+1);
 
     i += r+1; r = strlen(gasPrice)/2;
     memcpy(unsigned_txn+i, rlp(r, gasPrice, packet), r+1);
@@ -77,7 +78,7 @@ int generate_unsigned_txn(uint8_t* public_key, size_t pubkey_len, uint8_t* unsig
     memcpy(unsigned_txn+i, rlp(r,valueTrans, packet), r+1);
 
     i += r+1;
-    unsigned_txn[i] = 0x80; // nonce
+    unsigned_txn[i] = 0x80; // code
 
     return unsigned_txn_len;
 }
@@ -213,3 +214,26 @@ void generate_signed_txn(uint8_t* unsigned_txn, uint8_t v, uint8_t* r, uint8_t* 
 // 1c
 // a0 88ff6cf0fefd94db46111149ae4bfc179e9b94721fffd821d38d16464b3f71d0
 // a0 45e0aff800961cfce805daef7016b9b675c137a6a41a548f7b60a3484c06a33a
+
+// AttributeDict({
+        // 'accessList': [], 
+        // 'blockHash': HexBytes('0x37232cccbd2216fa461a5e87a117b9be11fb1077b6c35ab36e7ba6b3029dd3b7'), 
+        // 'blockNumber': 5120444, 
+        // 'chainId': 11155111, 
+        // 'from': '0x1fc35B79FB11Ea7D4532dA128DfA9Db573C51b09', 
+        // 'gas': 22000, 
+        // 'gasPrice': 55304412496, 
+        // 'hash': HexBytes('0xe3f047354e5a1fafef1d6dce088eb97a49118cdd68a0a60ea7cfaa63b44a6c37'), 
+        // 'input': HexBytes('0x'), 
+        // 'maxFeePerGas': 86000000000, 
+        // 'maxPriorityFeePerGas': 9000000000, 
+        // 'nonce': 9644606, 
+        // 'r': HexBytes('0xc515bbb14bbfcdcd3cd359c5674d71bff84ac7352057f07d3a71fbbb86f10e72'), 
+        // 's': HexBytes('0x63f5a826aadd3734fce97f67ec89720158f183ff94c4107a88c4162d05eeccbc'), 
+        // 'to': '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f', 
+        // 'transactionIndex': 237, 
+        // 'type': 2, 
+        // 'v': 1, 
+        // 'value': 500000000000000000, 
+        // 'yParity': 1
+        // })

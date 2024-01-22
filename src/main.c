@@ -59,7 +59,7 @@ int main() {
     print_arr("s", s, 32);
 
     uint8_t signed_txn[300];
-    generate_signed_txn(unsigned_txn, v, r, s);
+    // generate_signed_txn(unsigned_txn, v, r, s);
 
     return 0;
 }
