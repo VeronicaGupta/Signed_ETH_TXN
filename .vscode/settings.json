@@ -2,6 +2,8 @@
     "files.associations": {
         "string_view": "c",
         "sha2.h": "c",
-        "sha3.h": "c"
+        "sha3.h": "c",
+        "secp256k1.h": "c",
+        "type_traits": "c"
     }
 }
