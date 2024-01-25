@@ -45,28 +45,26 @@ uint8_t* rlph(int data_size, uint8_t* data, uint8_t* packet){
 }
 
 int generate_unsigned_txn(uint8_t* public_key, size_t pubkey_len, uint8_t* unsigned_txn){
-    // transaction_data = {
-    //     'accessList': [],
-    //     'blockHash': HexBytes('0x37232cccbd2216fa461a5e87a117b9be11fb1077b6c35ab36e7ba6b3029dd3b7'),
-    //     'blockNumber': 5120444,
+    // {'accessList': [], 
+    //     'blockHash': HexBytes('0x37232cccbd2216fa461a5e87a117b9be11fb1077b6c35ab36e7ba6b3029dd3b7'), 
+    //     'blockNumber': 5120444, 
     //     'chainId': 11155111,
-    //     'from': '0x1fc35B79FB11Ea7D4532dA128DfA9Db573C51b09',
-    //     'gas': 22000,
-    //     'gasPrice': 55304412496,50000000000000
-    //     'hash': HexBytes('0xe3f047354e5a1fafef1d6dce088eb97a49118cdd68a0a60ea7cfaa63b44a6c37'),
-    //     'input': HexBytes('0x'),
-    //     'maxFeePerGas': 86000000000,
-    //     'maxPriorityFeePerGas': 9000000000,
-    //     'nonce': 9644606,
-    //     'r': HexBytes('0xc515bbb14bbfcdcd3cd359c5674d71bff84ac7352057f07d3a71fbbb86f10e72'),
-    //     's': HexBytes('0x63f5a826aadd3734fce97f67ec89720158f183ff94c4107a88c4162d05eeccbc'),
-    //     'to': '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f',
-    //     'transactionIndex': 237,
-    //     'type': 2,
-    //     'v': 1,
-    //     'value': 500000000000000000,
-    //     'yParity': 1
-    // }
+    //     'from': '0x1fc35B79FB11Ea7D4532dA128DfA9Db573C51b09', 
+    //     'gas': 22000, 
+    //     'gasPrice': 55304412496,
+    //     'hash': HexBytes('0xe3f047354e5a1fafef1d6dce088eb97a49118cdd68a0a60ea7cfaa63b44a6c37'), 
+    //     'input': HexBytes('0x'), 
+    //     'maxFeePerGas': 86000000000, 
+    //     'maxPriorityFeePerGas': 9000000000, 
+    //     'nonce': 9644606, 
+    //     'r': HexBytes('0xc515bbb14bbfcdcd3cd359c5674d71bff84ac7352057f07d3a71fbbb86f10e72'), 
+    //     's': HexBytes('0x63f5a826aadd3734fce97f67ec89720158f183ff94c4107a88c4162d05eeccbc'), 
+    //     'to': '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f', 
+    //     'transactionIndex': 237, 
+    //     'type': 2, 
+    //     'v': 1, 
+    //     'value': 500000000000000000, 
+    //     'yParity': 1}
 
     int unsigned_txn_len = (((strlen(gasPrice)+strlen(gasLimit)+strlen(toAddress)+strlen(valueTrans))/2)+4) + 1;
 

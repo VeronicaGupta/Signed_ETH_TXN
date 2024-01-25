@@ -1,4 +1,5 @@
 #include "utility.h"
+#include "address.h"
 
 
 
@@ -40,8 +41,8 @@ int main() {
     // Sign the hash with the private key
     const int sig_len = privkey_len*2;
     uint8_t sig[sig_len];
-    int rec_id=0;
-    ecdsa_sign_digest(&secp256k1, private_key, unsigned_txn_hash, sig, &rec_id, 0);
+    int recid=0;
+    ecdsa_sign_digest(&secp256k1, private_key, unsigned_txn_hash, sig, &recid, 0);
     print_arr("sig", sig, sig_len);
 
     // Check the signature with public key
@@ -57,22 +58,45 @@ int main() {
     // print_arr("sig hash", sig_hash, 32);    
 
     // Output the values
-    rec_id=1;
-    uint32_t v;
+    uint32_t v=0;
     uint8_t r[privkey_len], s[privkey_len];
-    v = generate_vrs(sig, rec_id, v, r, s, sig_len);
+    v = generate_vrs(sig, recid, v, r, s, sig_len);
 
     // uint8_t* sig_der[71];
     // memzero(sig_der, 71);
     // ecdsa_sig_to_der(sig, sig_der);
     // print_arr("sig_der", sig_der, 71);
-    printf("r_id: %d\n", rec_id);
+    printf("r_id: %d\n", recid);
     printf("v: %02x\n", v);
     print_arr("r", r, 32);
     print_arr("s", s, 32);
 
     uint8_t signed_txn[120];
     generate_signed_txn(unsigned_txn, v, r, s, unsigned_txn_len, signed_txn);
+
+    // get uncompressed public key from the original seed
+    const int pubkey_uncompressed_len = 65;
+    uint8_t pubkey_uncompressed[pubkey_uncompressed_len];
+    print_arr("m4460000 public key", public_key, pubkey_len);
+    ecdsa_uncompress_pubkey(&secp256k1, public_key, pubkey_uncompressed);
+    print_arr("m4460000 uncom public key", pubkey_uncompressed, pubkey_uncompressed_len);
+
+    // verify public key from sig and digest
+    memzero(pubkey_uncompressed, pubkey_uncompressed_len);
+    ecdsa_recover_pub_from_sig(&secp256k1, pubkey_uncompressed, sig, unsigned_txn_hash, recid);
+    print_arr("derived uncom public key", pubkey_uncompressed, pubkey_uncompressed_len);
+
+    const int ethereum_address_len = 64;
+    char ethereum_address[ethereum_address_len];
+    memzero(ethereum_address, ethereum_address_len);
+
+    // verify address from the derived public key
+    uint8_t pubkey_hash[SHA3_256_DIGEST_LENGTH];
+    keccak_256(&pubkey_uncompressed[1], pubkey_uncompressed_len-1, pubkey_hash);       
+    ethereum_address_checksum(&pubkey_hash[12], ethereum_address, false, 1);
+
+    print_arr("derived uncom pubkey hash", pubkey_hash, SHA3_256_DIGEST_LENGTH);
+    printf("\nderived m4460000 addr[%d bytes]: %s\n",ethereum_address_len,  ethereum_address);
 
     return 0;
 }
