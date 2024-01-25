@@ -26,7 +26,7 @@ int main() {
     print_arr("m4460000 public key", public_key, pubkey_len); // of the input address of the unsigned txn
     print_arr("m4460000 private key", private_key, privkey_len); // of the input address of the unsigned txn
 
-    // ***************when txn is done****************************//
+    // ***************when coins in account****************************//
 
     uint8_t unsigned_txn[200];
     const int unsigned_txn_len = generate_unsigned_txn(public_key, pubkey_len, unsigned_txn);
@@ -40,13 +40,9 @@ int main() {
     // Sign the hash with the private key
     const int sig_len = privkey_len*2;
     uint8_t sig[sig_len];
-    int rec_id;
-    ecdsa_sign_digest(&secp256k1, private_key, unsigned_txn_hash, sig, rec_id, 0);
+    int rec_id=0;
+    ecdsa_sign_digest(&secp256k1, private_key, unsigned_txn_hash, sig, &rec_id, 0);
     print_arr("sig", sig, sig_len);
-
-    uint8_t sig_hash[32];
-    hasher_Raw(HASHER_SHA2, sig, sig_len, sig_hash);
-    print_arr("sig hash", sig_hash, 32);    
 
     // Check the signature with public key
     int result = ecdsa_verify_digest(&secp256k1, public_key,  sig, unsigned_txn_hash);
@@ -55,8 +51,13 @@ int main() {
     } else {
         fprintf(stderr, "Error: Transaction signing failed at %d.\n", result);
     }
+    
+    // uint8_t sig_hash[32];
+    // hasher_Raw(HASHER_SHA2, sig, sig_len, sig_hash);
+    // print_arr("sig hash", sig_hash, 32);    
 
     // Output the values
+    rec_id=1;
     uint32_t v;
     uint8_t r[privkey_len], s[privkey_len];
     v = generate_vrs(sig, rec_id, v, r, s, sig_len);
@@ -65,12 +66,12 @@ int main() {
     // memzero(sig_der, 71);
     // ecdsa_sig_to_der(sig, sig_der);
     // print_arr("sig_der", sig_der, 71);
-
-    printf("v: %02x", v);
+    printf("r_id: %d\n", rec_id);
+    printf("v: %02x\n", v);
     print_arr("r", r, 32);
     print_arr("s", s, 32);
 
-    uint8_t signed_txn[150];
+    uint8_t signed_txn[120];
     generate_signed_txn(unsigned_txn, v, r, s, unsigned_txn_len, signed_txn);
 
     return 0;
