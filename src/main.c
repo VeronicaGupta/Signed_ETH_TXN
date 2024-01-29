@@ -30,18 +30,25 @@ int main() {
     // ***************when coins in account****************************//
 
     uint8_t unsigned_txn[200];
-    const int unsigned_txn_len = generate_unsigned_txn(public_key, pubkey_len, unsigned_txn);
+    int unsigned_txn_len = generate_unsigned_txn(public_key, pubkey_len, unsigned_txn);
     print_arr("unsigned txn", unsigned_txn, unsigned_txn_len);
 
     // Calculate Keccak-256 hash of the transaction
+    const int n_unsigned_txn_len = 1+unsigned_txn_len+3;
+    uint8_t n_unsigned_txn[n_unsigned_txn_len]; int i=0;
+    n_unsigned_txn[i] = 0xec; i += 1;
+    memcpy(n_unsigned_txn+i, unsigned_txn, unsigned_txn_len); i += unsigned_txn_len;
+    memcpy(n_unsigned_txn+i, ("0x01", "0x80", "0x80"), 3);
+
     uint8_t unsigned_txn_hash[SHA3_256_DIGEST_LENGTH];
-    hash256(unsigned_txn, unsigned_txn_hash, unsigned_txn_len);
+    keccak_256(unsigned_txn, unsigned_txn_len, unsigned_txn_hash);
+    // hash256(n_unsigned_txn, unsigned_txn_hash, n_unsigned_txn_len);
     print_arr("unsigned txn hash", unsigned_txn_hash, SHA3_256_DIGEST_LENGTH);
 
     // Sign the hash with the private key
     const int sig_len = privkey_len*2;
     uint8_t sig[sig_len];
-    int recid=0;
+    int recid;
     ecdsa_sign_digest(&secp256k1, private_key, unsigned_txn_hash, sig, &recid, 0);
     print_arr("sig", sig, sig_len);
 

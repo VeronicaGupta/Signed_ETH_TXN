@@ -11,12 +11,11 @@ const char* m446000_pubkey = "02ea988cd5d2bfbc11dd37a882565517aa2fa45a0c4dc4bff5
 const char* m4460000_pubkey = "024eb7a0fb5db32746a28adf81a24daa5312d351c5af8ee957d04c9f443825b806";
 
 // 6 parameters
-const char* nonce = "932A3F"; // 9644606+1
-const char* gasPrice = "2D79883D2000"; //324C8FDC8080"; //"2D79883D2000";//// 55304412496
+const char* nonce = "932A3F";// "932A3F"; // 9644606+1
+const char* gasPrice = "04a817c800"; //20 gwei
 const char* gasLimit = "55F0"; // 22000
 const char* toAddress = "6B61fd05FA7e73c2de6B1999A390Fee252109072";// "bbe6e5ad6bdbf22b284870493893b7c0addcb405" "47Ea71715F8049B80eD5C20d105e9C5D7631113f";
-const char* valueTrans = "058D15E176280000"; // 0.4 ETH
-
+const char* valueTrans = "b1a2bc2ec50000"; // 0.05 ETH
 const int chain_id = 11155111; // sepolia
 
 uint8_t* rlp(int data_size, const char* data_hex, uint8_t* packet){
@@ -73,9 +72,9 @@ int generate_unsigned_txn(uint8_t* public_key, size_t pubkey_len, uint8_t* unsig
 
     int i=0, r=0; uint8_t packet[50];
     // unsigned_txn[i] = unsigned_txn_len;
+    // i +=1;
 
     // unsigned_txn[i] = 0x80; // nonce
-
     r = strlen(nonce)/2;
     memcpy(unsigned_txn+i, rlp(r, nonce, packet), r+1); // nonce
     unsigned_txn_len += r+1;
@@ -242,6 +241,45 @@ void generate_signed_txn(uint8_t* unsigned_txn, uint32_t v, uint8_t* r, uint8_t*
 // a0 88ff6cf0fefd94db46111149ae4bfc179e9b94721fffd821d38d16464b3f71d0
 // a0 45e0aff800961cfce805daef7016b9b675c137a6a41a548f7b60a3484c06a33a
 
+// f8
+// 6f
+// 80
+// 85 04a817c800
+// 82 55f0
+// 94 6b61fd05fa7e73c2de6b1999a390fee252109072
+// 88 016345785d8a0000
+// 80
+// 84 01546d71
+// a0 6d94e5080c458ca35a9882cec6d67e18704e224888c3516199c3d3246d523a52
+// 9f0c02d49b112aa210b43e5889b0fcfae11b7f229f350b391809e03aad827c0b
+
+/*
+f8
+72
+83 932a3f
+85 04a817c800
+82 55f0
+94 6b61fd05fa7e73c2de6b1999a390fee252109072
+87 b1a2bc2ec50000
+80
+84 01546d72
+a0 dd6b7d0ae0473fc470d28c5dcb55574b78e212e847b0566fdbd7564f1901c139
+a0 5a92580f8f9a99dc0e359253a1dfccd13b13b2d4b08a87c6275b0736c2082483
+
+f8
+72
+83 932a3f
+85 04a817c800
+82 55f0
+94 6b61fd05fa7e73c2de6b1999a390fee252109072
+87 b1a2bc2ec50000
+80
+84 01546d72
+a0 152e9e5c9b6f9e5e30939b52ad51c5a72eb43497b109a1e7c6c1af9c89def824
+a0 48e3542e00410b0e9f169866fa1f38b03569d3dcd0d458b5e39b90fd1a3cee3e
+*/
+
+
 // 02 // hash function type kecceb256
 
 // f8 // length of length field
@@ -261,6 +299,7 @@ void generate_signed_txn(uint8_t* unsigned_txn, uint32_t v, uint8_t* r, uint8_t*
 
 // (3+3+5+5+2+20+8+0+0+0+32+32)+12 = 122 (length field)
 
+<<<<<<< Updated upstream
 // f8
 // 6c
 // 09
@@ -273,7 +312,19 @@ void generate_signed_txn(uint8_t* unsigned_txn, uint32_t v, uint8_t* r, uint8_t*
 // a0 28ef61340bd939bc2195fe537567866003e1a15d3c71ff63e1590620aa636276
 // a0 67cbe9d8997f761aecb703304b3800ccf555c9f3dc64214b297fb1966a3b6d83
 
+// ec
+// 09
+// 85 04a817c800
+// 82 5208
+// 94 3535353535353535353535353535353535353535
+// 88 0de0b6b3a7640000
+// 80
+// 01
+// 80
+// 80
 
+=======
+>>>>>>> Stashed changes
 // AttributeDict({
         // 'accessList': [], 
         // 'blockHash': HexBytes('0x37232cccbd2216fa461a5e87a117b9be11fb1077b6c35ab36e7ba6b3029dd3b7'), 
