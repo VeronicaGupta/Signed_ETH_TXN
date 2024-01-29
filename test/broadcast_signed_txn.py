@@ -1,53 +1,75 @@
 
-api = '1KZW6KKJCDNKURT7DS3UQJYCIC3YBWZSZG'
-i_api = 'https://sepolia.infura.io/v3/af91f7d6b2d6491299b2920958fcd06d'
-hash = 'e3f047354e5a1fafef1d6dce088eb97a49118cdd68a0a60ea7cfaa63b44a6c37'
-pk = 'ea7308b05a2dfc9be67f4f04cbb3d6337d8b0d6c25dfc8925a05d892423c5af3'
+api = 'https://sepolia.infura.io/v3/af91f7d6b2d6491299b2920958fcd06d'
+txnID = 'e3f047354e5a1fafef1d6dce088eb97a49118cdd68a0a60ea7cfaa63b44a6c37'
+priv_key = 'ea7308b05a2dfc9be67f4f04cbb3d6337d8b0d6c25dfc8925a05d892423c5af3'
 
 from web3 import Web3
 from eth_account import Account
 
-# Connect to the Ethereum node
-web3 = Web3(Web3.HTTPProvider(i_api))
+web3 = Web3(Web3.HTTPProvider(api))
 
-# Get the transaction details
-transaction = web3.eth.get_transaction(hash)
+transaction = web3.eth.get_transaction(txnID)
 
 # Sender address
 sender_address = "0x47Ea71715F8049B80eD5C20d105e9C5D7631113f"
-
-# Recipient address
 recipient_address = "0x6B61fd05FA7e73c2de6B1999A390Fee252109072"
-
-# Gas price in Wei (replace with your own value)
 gas_price = web3.to_wei("20", "gwei")
-
-# Gas limit (replace with your own value)
 gas_limit = 22000
-
-# Value to send in Wei (replace with your own value)
 value = web3.to_wei("0.05", "ether")
-
-# Nonce (replace with your own value)
-nonce = 9644607 #web3.eth.get_transaction_count(sender_address)
+nonce = web3.eth.get_transaction_count(sender_address)
 
 # Chain ID (replace with the appropriate chain ID)
 chain_id = 11155111  # sepolia
 
-# Create the transaction dictionary
-transaction = {
+# Get and determine gas parameters
+latest_block = web3.eth.get_block("latest")
+base_fee_per_gas = latest_block.baseFeePerGas   # Base fee in the latest block (in wei)
+max_priority_fee_per_gas = web3.to_wei(1, 'gwei') # Priority fee to include the transaction in the block
+max_fee_per_gas = (5 * base_fee_per_gas) + max_priority_fee_per_gas # Maximum amount you’re willing to pay 
+
+# Define the transaction parameters
+transaction_params = {
+    'from': sender_address,
     'to': recipient_address,
-    'value': value,
-    'gas': gas_limit,
+    'value': web3.to_wei(0.01, 'ether'),  # Transaction value (0.1 Ether in this example)
+    'nonce': web3.eth.get_transaction_count(sender_address),
+    'gas': 22000,  # Gas limit for the transaction
     'gasPrice': gas_price,
-    'nonce': nonce,
-    'chainId': chain_id,
+    'chainId': 11155111 # ChainId of Sepolia Testnet
 }
 
 # Sign the transaction
-signed_transaction = Account.sign_transaction(transaction, pk)
+transaction = web3.eth.account.sign_transaction(transaction_params, priv_key)
+print(transaction)
 
-print(signed_transaction)
+# Fetch balance data
+balance_sender = web3.from_wei(web3.eth.get_balance(sender_address), 'ether')
+balance_recipient = web3.from_wei(web3.eth.get_balance(recipient_address), 'ether')
+
+print(f'The balance of { sender_address } is: { balance_sender } ETH')
+print(f'The balance of { recipient_address } is: { balance_recipient } ETH')
+
+
+# Send the transaction
+# transaction_hash = web3.eth.send_raw_transaction(transaction.raw_ransaction)
+
+# # Wait for the transaction to be mined
+# transaction_receipt = web3.eth.wait_for_transaction_receipt(transaction_hash)
+
+# # Check the transaction status
+# if transaction_receipt.status:
+#     print('Transaction successful!')
+#     print('Transaction hash:', transaction_hash.hex())
+#     print(f'Explorer link: https://sepolia.etherscan.io/tx/{transaction_hash.hex()}')
+# else:
+#     print('Transaction failed.')
+
+# # Fetch balance data after the transaction
+# balance_sender = web3.from_wei(web3.eth.get_balance(sender_address), 'ether')
+# balance_recipient = web3.from_wei(web3.eth.get_balance(recipient_address), 'ether')
+
+# print(f'The balance of { sender_address } is: { balance_sender } ETH')
+# print(f'The balance of { recipient_address } is: { balance_recipient } ETH')
 
 # Broadcast the transaction
 # tx_hash = web3.eth.send_raw_transaction(signed_transaction.raw_transaction)
@@ -75,6 +97,7 @@ print(signed_transaction)
 '''
 
 '''
+
 f87283932a3f8504a817c8008255f0946b61fd05fa7e73c2de6b1999a390fee25210907287b1a2bc2ec50000808401546d72a0dd6b7d0ae0473fc470d28c5dcb55574b78e212e847b0566fdbd7564f1901c139a05a92580f8f9a99dc0e359253a1dfccd13b13b2d4b08a87c6275b0736c2082483
 {
   "chainId": "11155111",

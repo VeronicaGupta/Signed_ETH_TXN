@@ -1,7 +1,7 @@
 from eth_utils import to_hex
 from ethereum.transactions import Transaction
 
-def encode_ethereum_transaction(recipient_address, value, gas_limit, gas_price, nonce):
+def encode_ethereum_transaction(recipient_address, value, gas_limit, gas_price, nonce, chain_id):
     transaction = Transaction(
         to=recipient_address,
         value=value,
@@ -9,9 +9,10 @@ def encode_ethereum_transaction(recipient_address, value, gas_limit, gas_price, 
         gasprice=gas_price,
         nonce=nonce,
         data="0x80",
+        # chain_id=chain_id,
     )
-    serialized_transaction = transaction.serialize()
-    return to_hex(serialized_transaction)
+    encoded_transaction = transaction.serialize()
+    return to_hex(encoded_transaction)
 
 # Example usage
 recipient_address = "0x6B61fd05FA7e73c2de6B1999A390Fee252109072"
@@ -21,8 +22,20 @@ gas_price = 20000000000  # 20 Gwei
 nonce = 9644607 
 chain_id = 11155111  # sepolia
 
-encoded_transaction = encode_ethereum_transaction(
-    recipient_address, value, gas_limit, gas_price, nonce
+from ethereum.transactions import Transaction
+# Create the unsigned transaction object
+unsigned_transaction = Transaction(
+    nonce=nonce,
+    gasprice=int(gas_price * 1e9),  # Convert Gwei to Wei
+    startgas=gas_limit,
+    to=recipient_address,
+    value=int(value * 1e18),  # Convert Ether to Wei
+    data=b"",
+    v=chain_id * 2 + 35,  # v for EIP-155
+    r=0,
+    s=0,
 )
 
-print(encoded_transaction)
+# Get the hex representation of the unsigned transaction
+unsigned_transaction_hex = unsigned_transaction.hex()
+print("Unsigned Transaction Hex:", unsigned_transaction_hex)
