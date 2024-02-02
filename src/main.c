@@ -29,16 +29,25 @@ int main() {
 
     // ***************when coins in account****************************//
 
-    uint8_t unsigned_txn[200];
-    int unsigned_txn_len = generate_unsigned_txn(public_key, pubkey_len, unsigned_txn);
-    print_arr("unsigned txn", unsigned_txn, unsigned_txn_len);
+    const char *unsigned_txn_hex = "e903850c9f71f523826349946b61fd05fa7e73c2de6b1999a390fee25210907287470de4df8200008180";
+    
+    printf("\nunsigned txn[%d bytes] : %s\n", strlen(unsigned_txn_hex)/2, unsigned_txn_hex);
+
+    // get unsigned txn bytearray
+    size_t unsigned_txn_len = strlen(unsigned_txn_hex) / 2;
+    uint8_t unsigned_txn[unsigned_txn_len]; 
+    print_hexarr("unsigned txn", unsigned_txn_hex, unsigned_txn_len, unsigned_txn);
+
+    // uint8_t unsigned_txn[200];
+    // int unsigned_txn_len = generate_unsigned_txn(public_key, pubkey_len, unsigned_txn);
+    // print_arr("unsigned txn", unsigned_txn, unsigned_txn_len);
 
     // Calculate Keccak-256 hash of the transaction
-    const int n_unsigned_txn_len = 1+unsigned_txn_len+3;
-    uint8_t n_unsigned_txn[n_unsigned_txn_len]; int i=0;
-    n_unsigned_txn[i] = 0xec; i += 1;
-    memcpy(n_unsigned_txn+i, unsigned_txn, unsigned_txn_len); i += unsigned_txn_len;
-    memcpy(n_unsigned_txn+i, ("0x01", "0x80", "0x80"), 3);
+    // const int n_unsigned_txn_len = 1+unsigned_txn_len+3;
+    // uint8_t n_unsigned_txn[n_unsigned_txn_len]; int i=0;
+    // n_unsigned_txn[i] = 0xec; i += 1;
+    // memcpy(n_unsigned_txn+i, unsigned_txn, unsigned_txn_len); i += unsigned_txn_len;
+    // memcpy(n_unsigned_txn+i, ("0x01", "0x80", "0x80"), 3);
 
     uint8_t unsigned_txn_hash[SHA3_256_DIGEST_LENGTH];
     keccak_256(unsigned_txn, unsigned_txn_len, unsigned_txn_hash);
@@ -48,7 +57,7 @@ int main() {
     // Sign the hash with the private key
     const int sig_len = privkey_len*2;
     uint8_t sig[sig_len];
-    int recid;
+    int recid=0;
     ecdsa_sign_digest(&secp256k1, private_key, unsigned_txn_hash, sig, &recid, 0);
     print_arr("sig", sig, sig_len);
 

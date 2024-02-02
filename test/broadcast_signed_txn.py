@@ -13,29 +13,28 @@ transaction = web3.eth.get_transaction(txnID)
 # Sender address
 sender_address = "0x47Ea71715F8049B80eD5C20d105e9C5D7631113f"
 recipient_address = "0x6B61fd05FA7e73c2de6B1999A390Fee252109072"
-gas_price = web3.to_wei("20", "gwei")
+gas_price = web3.to_wei("22", "gwei")
 gas_limit = 22000
-value = web3.to_wei("0.05", "ether")
+value = web3.to_wei("0.002", "ether")
 nonce = web3.eth.get_transaction_count(sender_address)
-
-# Chain ID (replace with the appropriate chain ID)
 chain_id = 11155111  # sepolia
 
-# Get and determine gas parameters
-latest_block = web3.eth.get_block("latest")
-base_fee_per_gas = latest_block.baseFeePerGas   # Base fee in the latest block (in wei)
-max_priority_fee_per_gas = web3.to_wei(1, 'gwei') # Priority fee to include the transaction in the block
-max_fee_per_gas = (5 * base_fee_per_gas) + max_priority_fee_per_gas # Maximum amount you’re willing to pay 
+# # Get and determine gas parameters
+# latest_block = web3.eth.get_block("latest")
+# base_fee_per_gas = latest_block.baseFeePerGas   # Base fee in the latest block (in wei)
+# max_priority_fee_per_gas = web3.to_wei(1, 'gwei') # Priority fee to include the transaction in the block
+# max_fee_per_gas = (5 * base_fee_per_gas) + max_priority_fee_per_gas # Maximum amount you’re willing to pay 
+
+print()
 
 # Define the transaction parameters
 transaction_params = {
-    'from': sender_address,
     'to': recipient_address,
-    'value': web3.to_wei(0.01, 'ether'),  # Transaction value (0.1 Ether in this example)
-    'nonce': web3.eth.get_transaction_count(sender_address),
-    'gas': 22000,  # Gas limit for the transaction
+    'value': value,  # Transaction value (0.1 Ether in this example)
+    'nonce': nonce,
+    'gas': gas_limit,  # Gas limit for the transaction
     'gasPrice': gas_price,
-    'chainId': 11155111 # ChainId of Sepolia Testnet
+    'chainId': chain_id # ChainId of Sepolia Testnet
 }
 
 # Sign the transaction
@@ -46,7 +45,7 @@ print(transaction)
 balance_sender = web3.from_wei(web3.eth.get_balance(sender_address), 'ether')
 balance_recipient = web3.from_wei(web3.eth.get_balance(recipient_address), 'ether')
 
-print(f'The balance of { sender_address } is: { balance_sender } ETH')
+print(f'\nThe balance of { sender_address } is: { balance_sender } ETH')
 print(f'The balance of { recipient_address } is: { balance_recipient } ETH')
 
 
@@ -115,4 +114,17 @@ f87283932a3f8504a817c8008255f0946b61fd05fa7e73c2de6b1999a390fee25210907287b1a2bc
   "value": "50000000000000000"
 }
 Txn Hash: 0x73bad52da719b5e659cfd0b75c23adfa14352528a9b594bdf3b5d3a5e0de9b10
+'''
+
+'''
+f8
+6f
+02
+85 04a817c800
+82 55f0
+94 6b61fd05fa7e73c2de6b1999a390fee2521090728723
+86 f26fc1000080
+84 01546d72
+a0 6667381bfef2af4446bc6723be25c9edacb13acfe6c3f61282404404ae71115b
+a0 1d5af0c5e58464cf00bbf2f78a438e79f6fd4e7f7d60cf347f83cb7f64ee9c3f
 '''

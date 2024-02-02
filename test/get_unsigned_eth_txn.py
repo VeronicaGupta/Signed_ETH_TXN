@@ -1,29 +1,32 @@
-
-api = '1KZW6KKJCDNKURT7DS3UQJYCIC3YBWZSZG'
-i_api = 'https://sepolia.infura.io/v3/af91f7d6b2d6491299b2920958fcd06d'
-hash = 'e3f047354e5a1fafef1d6dce088eb97a49118cdd68a0a60ea7cfaa63b44a6c37'
-pk = 'ea7308b05a2dfc9be67f4f04cbb3d6337d8b0d6c25dfc8925a05d892423c5af3'
-
+from ethereum.transactions import Transaction
+from rlp import encode
 from web3 import Web3
-from eth_account import Account
 
-# Connect to the Ethereum node
-web3 = Web3(Web3.HTTPProvider(i_api))
+web3 = Web3(Web3.HTTPProvider('https://sepolia.infura.io/v3/af91f7d6b2d6491299b2920958fcd06d'))
 
-# Get the transaction details
-transaction = web3.eth.get_transaction(hash)
+# Sender address
+sender_address = "0x47Ea71715F8049B80eD5C20d105e9C5D7631113f"
+recipient_address = "0x6B61fd05FA7e73c2de6B1999A390Fee252109072"
+gas_price = web3.to_wei("22", "gwei")
+gas_limit = 22000
+value = web3.to_wei("0.002", "ether")
+nonce = web3.eth.get_transaction_count(sender_address)
+chain_id = 11155111  # sepolia
 
-# Print the raw transaction hex
-# raw_transaction_hex = web3.eth.account. encode_transaction(transaction).hex()
-# print("Raw Transaction Hex:", raw_transaction_hex)
+# Define the transaction parameters
+transaction_params = {
+    'to': recipient_address,
+    'value': value,
+    'nonce': nonce,
+    'startgas': gas_limit,
+    'gasprice': gas_price,
+    'data': ''
+}
 
-from pprint import pprint
-pprint(transaction)
+# Create an unsigned transaction
+transaction = Transaction(**transaction_params)
 
-# # Encode the transaction
-# encoded_transaction = Account.sign_transaction(transaction, private_key=pk)
+# Serialize the transaction using RLP encoding
+unsigned_transaction_hex = encode(transaction)
 
-# # # Print the raw unsigned transaction hex
-# raw_transaction_hex = encoded_transaction.rawTransaction.hex()
-# print("Raw Unsigned Transaction Hex:", raw_transaction_hex)
-
+print(unsigned_transaction_hex.hex())
