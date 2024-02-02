@@ -1,0 +1,145 @@
+parnika@parnika:~/Documents/Cypherock/Projects/eth-command-line$ ./sbtw
+[info] welcome to sbt 1.3.13 (Ubuntu Java 11.0.21)
+[info] loading settings for project eth-command-line-build from plugins.sbt ...
+[info] loading project definition from /home/parnika/Documents/Cypherock/Projects/eth-command-line/project
+Feb 02, 2024 6:33:22 PM com.mchange.v2.log.MLog 
+INFO: MLog clients using java 1.4+ standard logging with redirectable loggers.
+[info] loading settings for project eth-command-line from build.sbt ...
+[info] set current project to eth-command-line (in build file:/home/parnika/Documents/Cypherock/Projects/eth-command-line/)
+[info] Updating available solidity compiler set.
+[info] sbt-ethereum-0.5.3 successfully initialized (built Thu, 18 Mar 2021 19:46:19 -0400)
+[info]  + shoebox directory: '/home/parnika/.sbt-ethereum'
+sbt:eth-command-line> ethNodeUrlDefaultSet https://sepolia.infura.io/v3/af91f7d6b2d6491299b2920958fcd06d
+A default node json-rpc URL for chain with ID 1 has already been set: '11155111'.
+Do you wish to replace it? [y/n] y
+[info] Successfully set default node json-rpc URL for chain with ID 1 to https://sepolia.infura.io/v3/af91f7d6b2d6491299b2920958fcd06d.
+[success] Total time: 4 s, completed 02-Feb-2024, 6:38:08 PM
+sbt:eth-command-line> ethKeystoreList
++--------------------------------------------+
+| Keystore Addresses                         |
++--------------------------------------------+
+| 0x00e10b456d44Fd682e62aA8318e284CBE4879F04 |
++--------------------------------------------+
+[success] Total time: 0 s, completed 02-Feb-2024, 6:39:02 PM
+sbt:eth-command-line> ethNode
+ethNodeBlockNumberPrint       ethNodeChainId                ethNodeChainIdDefaultDrop     
+ethNodeChainIdDefaultPrint    ethNodeChainIdDefaultSet      ethNodeChainIdOverride        
+ethNodeChainIdOverrideDrop    ethNodeChainIdOverridePrint   ethNodeChainIdOverrideSet     
+ethNodeChainIdPrint           ethNodeUrl                    ethNodeUrlDefaultDrop         
+ethNodeUrlDefaultPrint        ethNodeUrlDefaultSet          ethNodeUrlOverride            
+ethNodeUrlOverrideDrop        ethNodeUrlOverridePrint       ethNodeUrlOverrideSet         
+ethNodeUrlPrint               
+sbt:eth-command-line> ethAddressSenderDefaultSet 0x47Ea71715F8049B80eD5C20d105e9C5D7631113f
+[info] Successfully set default sender address for chain with ID 1 to '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f' (with aliases ['default-sender'] on chain with ID 1).
+[info] You can use the synthetic alias 'default-sender' to refer to this address.
+[info] Refreshing caches.
+[success] Total time: 0 s, completed 02-Feb-2024, 6:40:47 PM
+sbt:eth-command-line> ethTransactionUnsignedRaw 0x6B61fd05FA7e73c2de6B1999A390Fee252109072 0x80 0.02 ether
+[warn] The nonce for this transaction (3) was automatically computed for '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f' (with aliases ['default-sender'] on chain with ID 1).
+[warn] The transaction will likely be invalid if signed on behalf of any other address, or if some of transaction is submitted by this address prior to this transaction.
+Full unsigned transaction:
+0xe903850aa1506cbf826349946b61fd05fa7e73c2de6b1999a390fee25210907287470de4df8200008180
+
+Enter the path to a (not-yet-existing) file into which to write the binary unsigned transaction, or [return] not to save: [warn] Canceling execution...
+[error] Total time: 261 s (04:21), completed 02-Feb-2024, 6:46:08 PM
+sbt:eth-command-line> ethNodeCH
+{invalid input}   
+sbt:eth-command-line> ethNodeChainIdDefaultSet
+[error] Expected ';'
+[error] Not a valid command: ethNodeChainIdDefaultSet
+[error] Expected whitespace character
+[error] ethNodeChainIdDefaultSet
+[error]                         ^
+sbt:eth-command-line> ethNodeChainIdDefaultSet 11155111
+[info] The default chain ID has been set to 11155111.
+[info] The session is now active on chain with ID 11155111.
+[warn] No node URL has been defined -- not as a persistent default, nor as a session override, nor as an sbt setting or hardcoded value.
+[warn] Please define a node URL for this chain, via 'ethNodeUrlDefaultSet' or 'ethNodeUrlOverride'.
+[warn] All attempts to interact with the blockchain will fail until a node URL is defined!
+[warn] There is no sender available for the current session.
+[warn] Consider using 'ethAddressSenderDefaultSet' or 'ethAddressSenderOverrideSet' to define one.
+[info] Refreshing caches.
+[success] Total time: 0 s, completed 02-Feb-2024, 6:46:46 PM
+sbt:eth-command-line> ethTransactionUnsignedRaw 0x6B61fd05FA7e73c2de6B1999A390Fee252109072 0x80 0.02 ether
+[error] stack trace is suppressed; run last Compile / xethInvokerContext for the full output
+[error] (Compile / xethInvokerContext) com.mchange.sc.v1.sbtethereum.package$InvokerContextNotAvailableException: Could not instantiate an Invoker context. Please ensure that you have a node URL defined for the current chain ID. Try 'eth'.
+[error] Total time: 0 s, completed 02-Feb-2024, 6:47:43 PM
+sbt:eth-command-line> eth
+[info] The session is now active on chain with ID 11155111.
+[warn] No node URL has been defined -- not as a persistent default, nor as a session override, nor as an sbt setting or hardcoded value.
+[warn] Please define a node URL for this chain, via 'ethNodeUrlDefaultSet' or 'ethNodeUrlOverride'.
+[warn] All attempts to interact with the blockchain will fail until a node URL is defined!
+[warn] There is no sender available for the current session.
+[warn] Consider using 'ethAddressSenderDefaultSet' or 'ethAddressSenderOverrideSet' to define one.
+[success] Total time: 0 s, completed 02-Feb-2024, 6:48:06 PM
+sbt:eth-command-line> ethNodeUrlDefaultSet https://sepolia.infura.io/v3/af91f7d6b2d6491299b2920958fcd06d
+[info] Successfully set default node json-rpc URL for chain with ID 11155111 to https://sepolia.infura.io/v3/af91f7d6b2d6491299b2920958fcd06d.
+[success] Total time: 0 s, completed 02-Feb-2024, 6:48:35 PM
+sbt:eth-command-line> ethTransactionUnsignedRaw 0x6B61fd05FA7e73c2de6B1999A390Fee252109072 0x80 0.02 ether
+[error] stack trace is suppressed; run last Compile / ethTransactionUnsignedRaw for the full output
+[error] (Compile / ethTransactionUnsignedRaw) com.mchange.sc.v1.sbtethereum.package$SenderNotAvailableException: No address for sender! None of 'ethAddressSenderOverride', 'ethcfgAddressSender', 'ethAddressSenderDefault' for chain with ID 11155111, System property 'eth.sender', nor environment variable 'ETH_SENDER' have been set.
+[error] Total time: 0 s, completed 02-Feb-2024, 6:48:39 PM
+sbt:eth-command-line> ethAddressSenderDefault
+ethAddressSenderDefaultDrop    ethAddressSenderDefaultPrint   ethAddressSenderDefaultSet     
+sbt:eth-command-line> ethAddressSenderDefaultSet 0x47Ea71715F8049B80eD5C20d105e9C5D7631113f
+[info] Successfully set default sender address for chain with ID 11155111 to '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f' (with aliases ['default-sender'] on chain with ID 11155111).
+[info] You can use the synthetic alias 'default-sender' to refer to this address.
+[info] Refreshing caches.
+[success] Total time: 0 s, completed 02-Feb-2024, 6:49:18 PM
+sbt:eth-command-line> ethTransactionUnsignedRaw 0x6B61fd05FA7e73c2de6B1999A390Fee252109072 0x80 0.02 ether
+[warn] The nonce for this transaction (3) was automatically computed for '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f' (with aliases ['default-sender'] on chain with ID 11155111).
+[warn] The transaction will likely be invalid if signed on behalf of any other address, or if some of transaction is submitted by this address prior to this transaction.
+Full unsigned transaction:
+0xe903850c9f71f523826349946b61fd05fa7e73c2de6b1999a390fee25210907287470de4df8200008180
+
+Enter the path to a (not-yet-existing) file into which to write the binary unsigned transaction, or [return] not to save: 
+[warn] Unsigned transaction bytes not saved.
+[success] Total time: 301 s (05:01), completed 02-Feb-2024, 6:54:21 PM
+sbt:eth-command-line> ethTransactionSign
+Enter the path to a file containing a binary unsigned transaction, or just [return] to enter transaction data manually: 
+
+[warn] Canceling execution...
+[error] Total time: 138 s (02:18), completed 02-Feb-2024, 6:57:16 PM
+sbt:eth-command-line> ethTransactionSign 0xe903850c9f71f523826349946b61fd05fa7e73c2de6b1999a390fee25210907287470de4df8200008180
+Do you wish to sign for the sender associated with the current session, '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f' (with aliases ['default-sender'] on chain with ID 11155111)? [y/n] y
+The Chain ID associated with your current session is 11155111. Would you like to sign with this Chain ID? [y/n] y
+
+==> T R A N S A C T I O N   S I G N A T U R E   R E Q U E S T
+==>
+==> The transaction would be a message with...
+==>   To:    0x6B61fd05FA7e73c2de6B1999A390Fee252109072 (on chain with ID 11155111)
+==>   From:  0x47Ea71715F8049B80eD5C20d105e9C5D7631113f (with aliases ['default-sender'] on chain with ID 11155111)
+==>   Data:  0x80
+==>   Value: 0.02 ether
+==>
+==> !!! Any ABI is associated with the destination address is currently unknown, so we cannot decode the message data as a method call !!!
+==>
+==> The nonce of the transaction would be 3.
+==>
+==> $$$ The transaction you have requested could use up to 25417 units of gas.
+==> $$$ You would pay 54.214653219 gwei for each unit of gas, for a maximum cost of 0.001377973840867323 ether.
+==> $$$ (No USD value could be determined for ETH on chain with ID 11155111 from Coinbase).
+==> $$$ You would also send 0.02 ether for a maximum total cost of 0.021377973840867323 ether.
+
+Would you like to sign this transaction? [y/n] y
+
+[info] Unlocking address '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f' (with aliases ['default-sender'] on chain with ID 11155111).
+Enter passphrase or hex private key for address '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f': *******
+[info] No wallet available. Trying passphrase as hex private key.
+Bad credential for address '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f'. Please try again. <ctrl-d> aborts.
+Enter passphrase or hex private key for address '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f': *******
+[info] No wallet available. Trying passphrase as hex private key.
+Bad credential for address '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f'. Please try again. <ctrl-d> aborts.
+Enter passphrase or hex private key for address '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f': 
+[info] No wallet available. Trying passphrase as hex private key.
+Bad credential for address '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f'. Please try again. <ctrl-d> aborts.
+Enter passphrase or hex private key for address '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f': ******************************************************************
+[info] No wallet available. Trying passphrase as hex private key.
+[info] Successfully interpreted the credential supplied as hex private key for '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f'.
+
+Full signed transaction:
+0xf87003850c9f71f523826349946b61fd05fa7e73c2de6b1999a390fee25210907287470de4df82000081808401546d71a05676ea98bc0700961e68c2ec5d1a99cba5e423c23e2691b616f19dc7da8d849ea0174ec346c4d2c02588ee73f47405da4bd39051492fb6036f8522099488e01e8b
+
+Enter the path to a (not-yet-existing) file in which to write the binary signed transaction, or [return] to skip: 
+[warn] Signed transaction bytes not saved.
+[success] Total time: 274 s (04:34), completed 02-Feb-2024, 7:01:57 PM
