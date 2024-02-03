@@ -53,7 +53,7 @@ int main() {
     int sig_len = privkey_len*2;
     uint8_t sig[sig_len];
     int recid=0;
-    sig_len = ecdsa_sign_digest(&secp256k1, private_key, unsigned_txn_hash, sig, &recid, 0);
+    ecdsa_sign_digest(&secp256k1, private_key, unsigned_txn_hash, sig, &recid, 0);
     print_arr("sig", sig, sig_len);
 
     // Check the signature with public key
