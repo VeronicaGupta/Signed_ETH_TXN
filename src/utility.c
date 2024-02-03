@@ -1,6 +1,6 @@
 #include "utility.h"
 
-const char* hash = "e16a6e52535d088a314e40db43ecc049952a8ccb6a56c777367e824e7494e60e";
+const char* hash = "c09f99ed15627200695f2ad67b9634c86c874afc97c552305540d72cab9bf273";
 const char* vseed = "2990a761daa2249c91ae98acf56ecf558876f6aa566e1e6e025996f12c830b793d87dde3f68cf9138fbe041bb75ba500c8eadee43d3ce2c95f84f89925bf8db5";
 const char* m_pubkey = "036cd519b8ee267e7135b44e802df07970e56e3447bec20b720bd8fd8217b35a1d";
 const char* m_chaincode = "10f33e10df2f3864bb74e671cd510804cb69b88ae570fb714b4506ccca813b5c";
@@ -225,7 +225,9 @@ void generate_signed_txn(uint8_t* unsigned_txn, uint32_t v, uint8_t* r, uint8_t*
 
     print_arr("packet", packet, packet_len);
 
-    const int unsigned_txn_data_len =  unsigned_txn_len-1 -5 -2;
+    int unsigned_txn_data_len =  unsigned_txn_len-1 -5 -2;
+
+    unsigned_txn_data_len = unsigned_txn_len;
 
     const int signed_txn_len = 1 + 1 + unsigned_txn_data_len + packet_len; // <length of length field + length field + unsigned_txn_len + packet vrs>
     signed_txn[signed_txn_len];
@@ -271,15 +273,29 @@ void generate_signed_txn(uint8_t* unsigned_txn, uint32_t v, uint8_t* r, uint8_t*
 // a0 8a24c5d86f4cadd603f89e06fd9855e433299b674a00e87c42e305297517bda2
 // a0 04be20075eec67d01010280282493fb6d8a815fff5b32d440dc8aeed4f06e9b2
 
-f87003850c9f71f523826349946b61fd05fa7e73c2de6b1999a390fee25210907287470de4df82000081808401546d71a05676ea98bc0700961e68c2ec5d1a99cba5e423c23e2691b616f19dc7da8d849ea0174ec346c4d2c02588ee73f47405da4bd39051492fb6036f8522099488e01e8b
-
-// e9
+// f8
+// 70
 // 03
 // 85 0c9f71f523
 // 82 6349
 // 94 6b61fd05fa7e73c2de6b1999a390fee252109072
 // 87 470de4df820000
 // 81 80
+// 84 01546d71
+// a0 5676ea98bc0700961e68c2ec5d1a99cba5e423c23e2691b616f19dc7da8d849e
+// a0 174ec346c4d2c02588ee73f47405da4bd39051492fb6036f8522099488e01e8b
+
+// f8
+// 70
+// 03
+// 85 0c9f71f523
+// 82 6349
+// 94 6b61fd05fa7e73c2de6b1999a390fee252109072
+// 87 470de4df820000
+// 81 80
+// 84 01546d71
+// a0 c78a06dc321d7bf2c803576d5832a352a317eeb24e7f008f17940fa86c378dfa
+// a0 5582556d70f261d6aaad4abcd88e4a71a246ba05858fce4ea9a12fe18015359c
 
 // 02 // hash function type kecceb256
 

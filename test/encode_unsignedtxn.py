@@ -37,5 +37,6 @@ unsigned_transaction = Transaction(
 )
 
 # Get the hex representation of the unsigned transaction
-unsigned_transaction_hex = unsigned_transaction.hex()
+print("Unsigned Transaction Hex:", dir(unsigned_transaction))
+unsigned_transaction_hex = unsigned_transaction.serialize()
 print("Unsigned Transaction Hex:", unsigned_transaction_hex)

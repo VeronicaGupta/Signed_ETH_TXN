@@ -50,15 +50,15 @@ int main() {
     // memcpy(n_unsigned_txn+i, ("0x01", "0x80", "0x80"), 3);
 
     uint8_t unsigned_txn_hash[SHA3_256_DIGEST_LENGTH];
-    keccak_256(unsigned_txn, unsigned_txn_len, unsigned_txn_hash);
-    // hash256(n_unsigned_txn, unsigned_txn_hash, n_unsigned_txn_len);
+    // keccak_256(unsigned_txn, unsigned_txn_len, unsigned_txn_hash);
+    hash256(unsigned_txn, unsigned_txn_hash, unsigned_txn_len);
     print_arr("unsigned txn hash", unsigned_txn_hash, SHA3_256_DIGEST_LENGTH);
 
     // Sign the hash with the private key
-    const int sig_len = privkey_len*2;
+    int sig_len = privkey_len*2;
     uint8_t sig[sig_len];
     int recid=0;
-    ecdsa_sign_digest(&secp256k1, private_key, unsigned_txn_hash, sig, &recid, 0);
+    sig_len = ecdsa_sign_digest(&secp256k1, private_key, unsigned_txn_hash, sig, &recid, 0);
     print_arr("sig", sig, sig_len);
 
     // Check the signature with public key
@@ -88,7 +88,7 @@ int main() {
     print_arr("s", s, 32);
 
     uint8_t signed_txn[120];
-    generate_signed_txn(unsigned_txn, v, r, s, unsigned_txn_len, signed_txn);
+    generate_signed_txn(unsigned_txn, v, r, s, unsigned_txn_len-1, signed_txn);
 
     // get uncompressed public key from the original seed
     const int pubkey_uncompressed_len = 65;

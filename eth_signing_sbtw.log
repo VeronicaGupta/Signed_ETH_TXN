@@ -124,7 +124,7 @@ The Chain ID associated with your current session is 11155111. Would you like to
 Would you like to sign this transaction? [y/n] y
 
 [info] Unlocking address '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f' (with aliases ['default-sender'] on chain with ID 11155111).
-Enter passphrase or hex private key for address '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f': *******
+Enter passphrase or hex private key foa0r address '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f': *******
 [info] No wallet available. Trying passphrase as hex private key.
 Bad credential for address '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f'. Please try again. <ctrl-d> aborts.
 Enter passphrase or hex private key for address '0x47Ea71715F8049B80eD5C20d105e9C5D7631113f': *******
