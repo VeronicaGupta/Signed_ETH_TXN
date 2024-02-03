@@ -8,15 +8,15 @@ from eth_account import Account
 
 web3 = Web3(Web3.HTTPProvider(api))
 
-transaction = web3.eth.get_transaction(txnID)
+# transaction = web3.eth.get_transaction(txnID)
 
 # Sender address
 sender_address = "0x47Ea71715F8049B80eD5C20d105e9C5D7631113f"
 recipient_address = "0x6B61fd05FA7e73c2de6B1999A390Fee252109072"
-gas_price = web3.to_wei("22", "gwei")
-gas_limit = 22000
-value = web3.to_wei("0.002", "ether")
-nonce = web3.eth.get_transaction_count(sender_address)
+gas_price = web3.to_wei("54214653219", "wei")
+gas_limit = 25417
+value = web3.to_wei("0.02", "ether")
+nonce = 3 #web3.eth.get_transaction_count(sender_address)
 chain_id = 11155111  # sepolia
 
 # # Get and determine gas parameters
@@ -34,6 +34,7 @@ transaction_params = {
     'nonce': nonce,
     'gas': gas_limit,  # Gas limit for the transaction
     'gasPrice': gas_price,
+    'data': '0x80',
     'chainId': chain_id # ChainId of Sepolia Testnet
 }
 

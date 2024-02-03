@@ -29,18 +29,18 @@ int main() {
 
     // ***************when coins in account****************************//
 
-    const char *unsigned_txn_hex = "e903850c9f71f523826349946b61fd05fa7e73c2de6b1999a390fee25210907287470de4df8200008180";
+    // const char *unsigned_txn_hex = "e903850c9f71f523826349946b61fd05fa7e73c2de6b1999a390fee25210907287470de4df8200008180";
     
-    printf("\nunsigned txn[%d bytes] : %s\n", strlen(unsigned_txn_hex)/2, unsigned_txn_hex);
+    // printf("\nunsigned txn[%d bytes] : %s\n", strlen(unsigned_txn_hex)/2, unsigned_txn_hex);
 
-    // get unsigned txn bytearray
-    size_t unsigned_txn_len = strlen(unsigned_txn_hex) / 2;
-    uint8_t unsigned_txn[unsigned_txn_len]; 
-    print_hexarr("unsigned txn", unsigned_txn_hex, unsigned_txn_len, unsigned_txn);
+    // // get unsigned txn bytearray
+    // size_t unsigned_txn_len = strlen(unsigned_txn_hex) / 2;
+    // uint8_t unsigned_txn[unsigned_txn_len]; 
+    // print_hexarr("unsigned txn", unsigned_txn_hex, unsigned_txn_len, unsigned_txn);
 
-    // uint8_t unsigned_txn[200];
-    // int unsigned_txn_len = generate_unsigned_txn(public_key, pubkey_len, unsigned_txn);
-    // print_arr("unsigned txn", unsigned_txn, unsigned_txn_len);
+    uint8_t unsigned_txn[200];
+    int unsigned_txn_len = generate_unsigned_txn(public_key, pubkey_len, unsigned_txn);
+    print_arr("unsigned txn", unsigned_txn, unsigned_txn_len);
 
     // Calculate Keccak-256 hash of the transaction
     // const int n_unsigned_txn_len = 1+unsigned_txn_len+3;
@@ -88,7 +88,7 @@ int main() {
     print_arr("s", s, 32);
 
     uint8_t signed_txn[120];
-    generate_signed_txn(unsigned_txn, v, r, s, unsigned_txn_len-1, signed_txn);
+    generate_signed_txn(unsigned_txn, v, r, s, unsigned_txn_len, signed_txn);
 
     // get uncompressed public key from the original seed
     const int pubkey_uncompressed_len = 65;

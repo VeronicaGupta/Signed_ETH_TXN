@@ -11,11 +11,12 @@ const char* m446000_pubkey = "02ea988cd5d2bfbc11dd37a882565517aa2fa45a0c4dc4bff5
 const char* m4460000_pubkey = "024eb7a0fb5db32746a28adf81a24daa5312d351c5af8ee957d04c9f443825b806";
 
 // 6 parameters
-const char* nonce = "02";//"932A3F";// "932A3F"; // 9644606+1
-const char* gasPrice = "051f4d5c00"; //22 gwei
-const char* gasLimit = "55F0"; // 22000
-const char* toAddress = "6B61fd05FA7e73c2de6B1999A390Fee252109072";// "bbe6e5ad6bdbf22b284870493893b7c0addcb405" "47Ea71715F8049B80eD5C20d105e9C5D7631113f";
-const char* valueTrans = "071afd498d0000"; // 0.002 ETH
+const char* nonce = "03";//"932A3F";// "932A3F"; // 9644606+1
+const char* gasPrice = "0c9f71f523"; //54.214653219 gwei
+const char* gasLimit = "6349"; // 25417
+const char* toAddress = "6B61fd05FA7e73c2de6B1999A390Fee252109072";// "47Ea71715F8049B80eD5C20d105e9C5D7631113f";
+const char* valueTrans = "470de4df820000"; // 0.02 ETH
+const char* data = "80"; // 0.02 ETH
 const int chain_id = 11155111; // sepolia
 
 uint8_t* rlp(int data_size, const char* data_hex, uint8_t* packet){
@@ -65,19 +66,17 @@ int generate_unsigned_txn(uint8_t* public_key, size_t pubkey_len, uint8_t* unsig
     //     'value': 500000000000000000, 
     //     'yParity': 1}
 
-    size_t unsigned_txn_len = 1+ (((strlen(nonce)+strlen(gasPrice)+strlen(gasLimit)+strlen(toAddress)+strlen(valueTrans))/2)+5) + 1 + 5 + 2;
+    // size_t unsigned_txn_len = 1+ (((strlen(nonce)+strlen(gasPrice)+strlen(gasLimit)+strlen(toAddress)+strlen(valueTrans)+(strlen(data))/2)+6) + 1 + 2;
 
-    unsigned_txn[unsigned_txn_len];
-    memzero(unsigned_txn, unsigned_txn_len);
+    unsigned_txn[200];
+    memzero(unsigned_txn, 200);
 
     int i=0, r=0; uint8_t packet[30];
-    unsigned_txn[i] = 0xc0 + unsigned_txn_len-1; // rest packet length
-    i += 1;
-
+    i += 1; // 1st field
 
     r = strlen(nonce)/2;
     if (r==1){
-        unsigned_txn[i] = 0x02;    // nonce 1
+        unsigned_txn[i] = 0x03;    // nonce 1
         i += 1;
     } else {
         memcpy(unsigned_txn+i, rlp(r, nonce, packet), r+1); // nonce multi
@@ -100,10 +99,16 @@ int generate_unsigned_txn(uint8_t* public_key, size_t pubkey_len, uint8_t* unsig
     memcpy(unsigned_txn+i, rlp(r, valueTrans, packet), r+1); // value
     i += r+1;
 
-    unsigned_txn[i] = 0x80; // data
-    i += 1;
-
-    uint32_t v = 28;//35 + (chain_id*2); // v
+    r = strlen(data)/2;
+    if (r<1){
+        unsigned_txn[i] = 0x80; // data 1
+        i += 1;
+    } else {
+        memcpy(unsigned_txn+i, rlp(r, data, packet), r+1); // data multi
+        i += r+1; 
+    }
+    
+    uint32_t v = 36 + (chain_id*2); // v
     unsigned_txn[i] = 0x84; i+=1;
     unsigned_txn[i] = (uint8_t)((v >> 24) & 0xFF); i+=1;
     unsigned_txn[i] = (uint8_t)((v >> 16) & 0xFF); i+=1;
@@ -116,7 +121,10 @@ int generate_unsigned_txn(uint8_t* public_key, size_t pubkey_len, uint8_t* unsig
     unsigned_txn[i] = 0x80; // s
     i += 1;
 
-    return i;
+    i -= 1; // remove the previous updated index
+    unsigned_txn[0] = 0xc0 + i; // 1st field = packet length
+    
+    return i+1;
 }
 
 void hash256(uint8_t* data, uint8_t* output, size_t size) {
@@ -225,9 +233,9 @@ void generate_signed_txn(uint8_t* unsigned_txn, uint32_t v, uint8_t* r, uint8_t*
 
     print_arr("packet", packet, packet_len);
 
-    int unsigned_txn_data_len =  unsigned_txn_len-1 -5 -2;
+    int unsigned_txn_data_len = -1 + unsigned_txn_len -5 -2;
 
-    unsigned_txn_data_len = unsigned_txn_len;
+    // unsigned_txn_data_len = unsigned_txn_len;
 
     const int signed_txn_len = 1 + 1 + unsigned_txn_data_len + packet_len; // <length of length field + length field + unsigned_txn_len + packet vrs>
     signed_txn[signed_txn_len];
@@ -293,9 +301,32 @@ void generate_signed_txn(uint8_t* unsigned_txn, uint32_t v, uint8_t* r, uint8_t*
 // 94 6b61fd05fa7e73c2de6b1999a390fee252109072
 // 87 470de4df820000
 // 81 80
+// 84 01546d72
+// a0 e8609f77bfb6611efed7561cbcacf279bd3d5d638686e64134f27630c5d48291
+// a0 498eeafc7de764ec0e5a988325cfa018f5277e9138381ba0ec519316a4cfec70
+
+// f8
+// 70
+// 03
+// 85 0c9f71f523
+// 82 6349
+// 94 6b61fd05fa7e73c2de6b1999a390fee252109072
+// 87 470de4df820000
+// 81 80
 // 84 01546d71
 // a0 c78a06dc321d7bf2c803576d5832a352a317eeb24e7f008f17940fa86c378dfa
 // a0 5582556d70f261d6aaad4abcd88e4a71a246ba05858fce4ea9a12fe18015359c
+
+// f8
+// 6e
+// 03
+// 850c9f71f523
+// 826349
+// 946b61fd05fa7e73c2de6b1999a390fee252109072
+// 87470de4df820000
+// 8401546d71
+// a0da012c2eda51d2b416145e6918338024b6064c3294bd2b5aa015bdc01dd011da
+// a043e97e6347f7f3cf1e1aeb4acbc590a8b9859b3df3748f240effacf5017081da
 
 // 02 // hash function type kecceb256
 
