@@ -1,6 +1,6 @@
 #include "utility.h"
 
-const char* hash = "c09f99ed15627200695f2ad67b9634c86c874afc97c552305540d72cab9bf273";
+const char* hash = "9447bd9c4b781d2aa4733461f3062ed08bee88e83ea81a80899bf19af274e12d";
 const char* vseed = "2990a761daa2249c91ae98acf56ecf558876f6aa566e1e6e025996f12c830b793d87dde3f68cf9138fbe041bb75ba500c8eadee43d3ce2c95f84f89925bf8db5";
 const char* m_pubkey = "036cd519b8ee267e7135b44e802df07970e56e3447bec20b720bd8fd8217b35a1d";
 const char* m_chaincode = "10f33e10df2f3864bb74e671cd510804cb69b88ae570fb714b4506ccca813b5c";
@@ -9,19 +9,20 @@ const char* m4460_pubkey = "027dc18d1ef4cdac075436ccc8ed4e9811d33d82f56a4c371854
 const char* m44600_pubkey = "0298923deeecc9350aac6675e3f296bc5b37c35c34e8162c610c54ce2a6627af15";
 const char* m446000_pubkey = "02ea988cd5d2bfbc11dd37a882565517aa2fa45a0c4dc4bff5cc8b727acd63a73a";
 const char* m4460000_pubkey = "024eb7a0fb5db32746a28adf81a24daa5312d351c5af8ee957d04c9f443825b806";
+// from address = "47Ea71715F8049B80eD5C20d105e9C5D7631113f"
 
 // 6 parameters
-const char* nonce = "03";//"932A3F";// "932A3F"; // 9644606+1
+const char* nonce = "04"; // txn count at the from address
 const char* gasPrice = "0c9f71f523"; //54.214653219 gwei
 const char* gasLimit = "6349"; // 25417
-const char* toAddress = "6B61fd05FA7e73c2de6B1999A390Fee252109072";// "47Ea71715F8049B80eD5C20d105e9C5D7631113f";
+const char* toAddress = "6B61fd05FA7e73c2de6B1999A390Fee252109072";
 const char* valueTrans = "470de4df820000"; // 0.02 ETH
 const char* data = "80"; // 0.02 ETH
 const int chain_id = 11155111; // sepolia
+const char* chain_id_hex = "aa36a7"; // sepolia
 
 uint8_t* rlp(int data_size, const char* data_hex, uint8_t* packet){
-    uint8_t data[data_size];
-    hexToUint8(data_hex, data);
+    uint8_t* data = hexToUint8(data_hex);
 
     memzero(packet, data_size+1);
 
@@ -76,7 +77,8 @@ int generate_unsigned_txn(uint8_t* public_key, size_t pubkey_len, uint8_t* unsig
 
     r = strlen(nonce)/2;
     if (r==1){
-        unsigned_txn[i] = 0x03;    // nonce 1
+        uint8_t* nonceBytes = hexToUint8(nonce);
+        unsigned_txn[i] = nonceBytes[0];
         i += 1;
     } else {
         memcpy(unsigned_txn+i, rlp(r, nonce, packet), r+1); // nonce multi
@@ -108,23 +110,20 @@ int generate_unsigned_txn(uint8_t* public_key, size_t pubkey_len, uint8_t* unsig
         i += r+1; 
     }
     
-    uint32_t v = 36 + (chain_id*2); // v
-    unsigned_txn[i] = 0x84; i+=1;
-    unsigned_txn[i] = (uint8_t)((v >> 24) & 0xFF); i+=1;
-    unsigned_txn[i] = (uint8_t)((v >> 16) & 0xFF); i+=1;
-    unsigned_txn[i] = (uint8_t)((v >> 8) & 0xFF); i+=1;
-    unsigned_txn[i] = (uint8_t)(v & 0xFF); i+=1; 
+    r = strlen(chain_id_hex)/2;
+    memcpy(unsigned_txn+i, rlp(r, chain_id_hex, packet), r+1); // v = chain id
+    i += r+1; 
 
     unsigned_txn[i] = 0x80; // r
     i += 1;
 
     unsigned_txn[i] = 0x80; // s
-    i += 1;
 
-    i -= 1; // remove the previous updated index
-    unsigned_txn[0] = 0xc0 + i; // 1st field = packet length
+    const int unsigned_txn_len = i+1;
+
+    unsigned_txn[0] = 0xc0 + (unsigned_txn_len-1); // 1st field = packet length excluding first byte
     
-    return i+1;
+    return unsigned_txn_len;
 }
 
 void hash256(uint8_t* data, uint8_t* output, size_t size) {
@@ -202,42 +201,36 @@ uint32_t generate_vrs(const uint8_t *sig, int rec_id, uint32_t v, uint8_t* r, ui
     return v;
 }
 
-void prepare_final_txn(uint8_t* unsigned_txn, uint8_t* packet, uint8_t* final_txn, size_t unsigned_txn_len, size_t packet_len, size_t final_txn_len, int start_len, int end_len){
-    int mid_idx = start_len+packet_len;    
-    int end_idx = unsigned_txn_len-end_len;
-
-    memzero(final_txn, final_txn_len);    
-
-    memcpy(final_txn, unsigned_txn, start_len);
-    final_txn[start_len-1] = packet_len;
-    memcpy(final_txn+start_len, packet, packet_len);
-    memcpy(final_txn+mid_idx, unsigned_txn+end_idx, end_len);
-}
-
 void generate_signed_txn(uint8_t* unsigned_txn, uint32_t v, uint8_t* r, uint8_t* s, size_t unsigned_txn_len, uint8_t* signed_txn){
-    size_t packet_len = 3+(4+32+32);
-    uint8_t packet[packet_len];
-
-    memzero(packet, packet_len);
+    uint8_t vrs[100];
+    memzero(vrs, 100);
 
     int i=0, l=0; uint8_t out[32];
-    packet[i] = 0x84; i+=1;
-    packet[i] = (uint8_t)((v >> 24) & 0xFF); i+=1;
-    packet[i] = (uint8_t)((v >> 16) & 0xFF); i+=1;
-    packet[i] = (uint8_t)((v >> 8) & 0xFF); i+=1;
-    packet[i] = (uint8_t)(v & 0xFF); i+=1; 
+
+    l = 4;
+    vrs[i+1] = (uint8_t)((v >> 24) & 0xFF);
+    vrs[i+2] = (uint8_t)((v >> 16) & 0xFF);
+    vrs[i+3] = (uint8_t)((v >> 8) & 0xFF);
+    vrs[i+4] = (uint8_t)(v & 0xFF);
+    i += l+1; 
+    
     l = 32; 
-    memcpy(packet+i, rlph(l, r, out), l+1); // r
-    i += l+1; l = 32;
-    memcpy(packet+i, rlph(l, s, out), l+1); // s
+    memcpy(vrs+i, rlph(l, r, out), l+1); // r
+    i += l+1; 
+    
+    l = 32;
+    memcpy(vrs+i, rlph(l, s, out), l+1); // s
+    i += l+1;
 
-    print_arr("packet", packet, packet_len);
+    vrs[0] = 0x84;
 
-    int unsigned_txn_data_len = -1 + unsigned_txn_len -5 -2;
+    const int vrs_len = i;
+    print_arr("vrs", vrs, vrs_len);
 
-    // unsigned_txn_data_len = unsigned_txn_len;
 
-    const int signed_txn_len = 1 + 1 + unsigned_txn_data_len + packet_len; // <length of length field + length field + unsigned_txn_len + packet vrs>
+    int unsigned_txn_data_len = -1 + unsigned_txn_len - (1+(strlen(chain_id_hex))/2) -2; // removing the first field and the v, r and s fields
+
+    const int signed_txn_len = 1 + 1 + unsigned_txn_data_len + vrs_len; // <length of length field + length field + unsigned_txn_len + vrs vrs>
     signed_txn[signed_txn_len];
     memzero(signed_txn, signed_txn_len);
 
@@ -245,16 +238,16 @@ void generate_signed_txn(uint8_t* unsigned_txn, uint32_t v, uint8_t* r, uint8_t*
     signed_txn[i] = 0xf8; // length of length field
     i += 1;
 
-    signed_txn[i] = unsigned_txn_data_len + packet_len; // length field
+    signed_txn[i] = unsigned_txn_data_len + vrs_len; // length field
     i += 1;
 
-    memcpy(signed_txn+i, &unsigned_txn[1], unsigned_txn_data_len);
+    memcpy(signed_txn+i, &unsigned_txn[1], unsigned_txn_data_len); // exclude the first length field
     i += unsigned_txn_data_len;
 
-    memcpy(signed_txn+i, packet, packet_len);
+    memcpy(signed_txn+i, vrs, vrs_len);
 
     print_arr("signed txn", signed_txn, signed_txn_len);
-    printf("%d, %d, %d\n", unsigned_txn_len, packet_len, signed_txn_len);
+    // printf("%d, %d, %d\n", unsigned_txn_len, vrs_len, signed_txn_len);
 }
 
 // f8
@@ -292,6 +285,17 @@ void generate_signed_txn(uint8_t* unsigned_txn, uint32_t v, uint8_t* r, uint8_t*
 // 84 01546d71
 // a0 5676ea98bc0700961e68c2ec5d1a99cba5e423c23e2691b616f19dc7da8d849e
 // a0 174ec346c4d2c02588ee73f47405da4bd39051492fb6036f8522099488e01e8b
+
+// f8
+// 72
+// 03
+// 850c9f71f523
+// 826349
+// 946b61fd05fa7e73c2de6b1999a390fee252109072
+// 87470de4df820000
+// 8180
+// 838401546d72
+// a0e8609f77bfb6611efed7561cbcacf279bd3d5d638686e64134f27630c5d48291a0498eeafc7de764ec0e5a988325cfa018f5277e9138381ba0ec519316a4cfec70
 
 // f8
 // 70

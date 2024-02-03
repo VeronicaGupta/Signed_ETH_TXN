@@ -49,9 +49,10 @@ balance_recipient = web3.from_wei(web3.eth.get_balance(recipient_address), 'ethe
 print(f'\nThe balance of { sender_address } is: { balance_sender } ETH')
 print(f'The balance of { recipient_address } is: { balance_recipient } ETH')
 
+print(transaction.rawTransaction.hex())
 
 # Send the transaction
-# transaction_hash = web3.eth.send_raw_transaction(transaction.raw_ransaction)
+# transaction_hash = web3.eth.send_raw_transaction(transaction.raw_transaction)
 
 # # Wait for the transaction to be mined
 # transaction_receipt = web3.eth.wait_for_transaction_receipt(transaction_hash)

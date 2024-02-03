@@ -29,7 +29,8 @@ int main() {
 
     // ***************when coins in account****************************//
 
-    // const char *unsigned_txn_hex = "e903850c9f71f523826349946b61fd05fa7e73c2de6b1999a390fee25210907287470de4df8200008180";
+    // when unsigned txn hex is available
+    // const char *unsigned_txn_hex = "ef03850c9f71f523826349946b61fd05fa7e73c2de6b1999a390fee25210907287470de4df820000818083aa36a78080";
     
     // printf("\nunsigned txn[%d bytes] : %s\n", strlen(unsigned_txn_hex)/2, unsigned_txn_hex);
 
@@ -38,16 +39,10 @@ int main() {
     // uint8_t unsigned_txn[unsigned_txn_len]; 
     // print_hexarr("unsigned txn", unsigned_txn_hex, unsigned_txn_len, unsigned_txn);
 
+    // when unsigned txn hex is unavailable
     uint8_t unsigned_txn[200];
     int unsigned_txn_len = generate_unsigned_txn(public_key, pubkey_len, unsigned_txn);
     print_arr("unsigned txn", unsigned_txn, unsigned_txn_len);
-
-    // Calculate Keccak-256 hash of the transaction
-    // const int n_unsigned_txn_len = 1+unsigned_txn_len+3;
-    // uint8_t n_unsigned_txn[n_unsigned_txn_len]; int i=0;
-    // n_unsigned_txn[i] = 0xec; i += 1;
-    // memcpy(n_unsigned_txn+i, unsigned_txn, unsigned_txn_len); i += unsigned_txn_len;
-    // memcpy(n_unsigned_txn+i, ("0x01", "0x80", "0x80"), 3);
 
     uint8_t unsigned_txn_hash[SHA3_256_DIGEST_LENGTH];
     // keccak_256(unsigned_txn, unsigned_txn_len, unsigned_txn_hash);
@@ -68,20 +63,12 @@ int main() {
     } else {
         fprintf(stderr, "Error: Transaction signing failed at %d.\n", result);
     }
-    
-    // uint8_t sig_hash[32];
-    // hasher_Raw(HASHER_SHA2, sig, sig_len, sig_hash);
-    // print_arr("sig hash", sig_hash, 32);    
 
     // Output the values
     uint32_t v=0;
     uint8_t r[privkey_len], s[privkey_len];
     v = generate_vrs(sig, recid, v, r, s, sig_len);
 
-    // uint8_t* sig_der[71];
-    // memzero(sig_der, 71);
-    // ecdsa_sig_to_der(sig, sig_der);
-    // print_arr("sig_der", sig_der, 71);
     printf("r_id: %d\n", recid);
     printf("v: %02x\n", v);
     print_arr("r", r, 32);

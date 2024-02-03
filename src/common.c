@@ -1,17 +1,20 @@
 
 #include "common.h"
 
-void hexToUint8(const char *hexString, uint8_t *bytearray) {
+uint8_t* hexToUint8(const char *hexString) {
     size_t length = strlen(hexString);
-    // printf("%ld\n\n", length);
     if (length % 2 != 0) {
         fprintf(stderr, "Error: Hex string must have an even number of characters.\n");
         exit(EXIT_FAILURE);
     }
 
-    for (size_t i = 0; i <length; i += 2) {
+    // Allocate memory for the resulting uint8_t array
+    uint8_t* bytearray = (uint8_t*)malloc(length / 2);
+
+    for (size_t i = 0; i < length; i += 2) {
         sscanf(hexString + i, "%2hhx", &bytearray[i / 2]);
     }
+    return bytearray;
 }
 
 void uint8ToHexString(const uint8_t *data, size_t size, char* hexstring) {
@@ -35,7 +38,7 @@ char* print_arr(char* name, uint8_t* bytearray, size_t size){
     char bytearray_hex[size*2+1];
     if (debug == true){        
         uint8ToHexString(bytearray, size, bytearray_hex);
-        printf("\n%s[%d bytes]: %s\n", name, strlen(bytearray_hex)/2, bytearray_hex);
+        printf("\n%s[%d bytes]: %s\n", name, (strlen(bytearray_hex)/2), bytearray_hex);
     }
     return bytearray_hex;
 }
@@ -46,7 +49,7 @@ uint8_t* print_hexarr(char* name, const char *hexString, size_t size, uint8_t* b
         exit(EXIT_FAILURE);
     }
 
-    hexToUint8(hexString, bytearray);
+    memcpy(bytearray, &hexToUint8(hexString)[0], size);
     
     // print_arr(name, bytearray, size);
 
