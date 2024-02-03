@@ -29,7 +29,7 @@ uint8_t* rlp(int data_size, const char* data_hex, uint8_t* packet){
     packet[0] = 0x80 + data_size;
     memcpy(packet+1, data, data_size);
 
-    print_arr("pkt", packet, data_size+1);
+    // print_arr("pkt", packet, data_size+1);
 
     return packet;
 }
@@ -40,7 +40,7 @@ uint8_t* rlph(int data_size, uint8_t* data, uint8_t* packet){
     packet[0] = 0x80 + data_size;
     memcpy(packet+1, data, data_size);
 
-    print_arr("pkt", packet, data_size+1);
+    // print_arr("pkt", packet, data_size+1);
 
     return packet;
 }
